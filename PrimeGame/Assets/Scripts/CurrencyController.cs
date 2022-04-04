@@ -10,9 +10,16 @@ public class CurrencyController : MonoBehaviour
     [SerializeField] private GameObject mainObject;
     [SerializeField] private GameObject particle;
 
+    private float startingYPos;
+
+    private void Start()
+    {
+        startingYPos = transform.position.y;
+    }
+
     private void Update()
     {
-        float posY = Mathf.Lerp(.9f, 1.1f, Mathf.PingPong(Time.time, 1));
+        float posY = Mathf.Lerp(startingYPos, startingYPos + .2f, Mathf.PingPong(Time.time, 1));
         transform.position = new Vector3(transform.position.x, posY, transform.position.z);
         transform.Rotate(0, ROTATE_SPEED, 0, Space.World);
     }

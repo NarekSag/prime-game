@@ -51,7 +51,7 @@ public class ObstacleTrigger : MonoBehaviour
 
             boxCollider.enabled = false;
             isTriggered = true;
-            triggeredEvent.Invoke();
+            triggeredEvent?.Invoke();
         }
     }
 
@@ -70,7 +70,7 @@ public class ObstacleTrigger : MonoBehaviour
                         wheel.transform.Rotate(wheelRotation * (movementSpeed == 0 ? MOVEMENT_SPEED : movementSpeed) * Time.deltaTime);
                 }
             }
-            if (obstacle.transform.localPosition == endPosition)
+            if (obstacle.transform.localPosition == endPosition && obstacle.transform.localRotation == Quaternion.Euler(endRotation))
             {
                 isTriggered = false;
             }

@@ -1,15 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
     #region Const
+    private const string RUN = "Run";
     private const string JUMP = "Jump";
     private const string SLIDE = "Slide";
-    private const string FALL_BACK = "Fall Back";
+    private const string FALL_BACK = "Stumble";//"Fall Back";
     private const string FALL_FORWARD = "Fall Forward";
     private const string OBSTACLE = "Obstacle";
+    private const string CATWALK_FORWARD = "CatWalkForward";
+    private const string CATWALK_BACKWARD = "CatWalkBackward";
     private const float FORCE = 100;
     private const float ROTATION_SPEED = 10;
     #endregion
@@ -17,6 +21,9 @@ public class PlayerController : MonoBehaviour
     private Quaternion leftRot = Quaternion.AngleAxis(-45, Vector3.up);
     private Quaternion rightRot = Quaternion.AngleAxis(45, Vector3.up);
     private Quaternion forwardRot = Quaternion.AngleAxis(0, Vector3.up);
+
+    [SerializeField] private GameObject tShirt;
+    [SerializeField] private Material tShirtMaterial;
 
     #region On Start Initialized variables
     private Animator animator;
@@ -44,7 +51,7 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if(!isHit)
+        if(!isHit && GameController.instance.gameStarted)
         {
             if (Input.GetKey(KeyCode.A))
             {
@@ -69,7 +76,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!isHit)
+        if (!isHit && GameController.instance.gameStarted)
         {
             if (Input.GetKeyDown(KeyCode.Space))
             {
@@ -99,6 +106,7 @@ public class PlayerController : MonoBehaviour
             else
             {
                 Debug.LogError("GAME OVER");
+                PlayerPreferences.SetCurrencyAmount(GameController.instance.currencyCounter);
                 //TO DO: GAME OVER SCREEN 
             }
         }
@@ -106,6 +114,7 @@ public class PlayerController : MonoBehaviour
 
     private IEnumerator ResetCharacter(float hitTime, float blinkTime)
     {
+        Debug.LogError("hit = " + hitTime);
         yield return new WaitForSeconds(hitTime);
         isHit = false;
         capsuleCollider.isTrigger = transform;
@@ -128,19 +137,40 @@ public class PlayerController : MonoBehaviour
 
     public float GetAnimClipTime(string name)
     {
-        AnimationClip[] clips = animator.runtimeAnimatorController.animationClips;
-        float length;
-        foreach (AnimationClip clip in clips)
-        {
-            switch (clip.name)
-            {
-                case FALL_BACK:
-                    return length = clip.length;
-                case FALL_FORWARD:
-                    return length = clip.length;
-            }
-        }
+        return animator.runtimeAnimatorController.animationClips.Where(n => n.name == name).FirstOrDefault().length;
+    }
 
-        return 0;
+    public void SetGameState()
+    {
+        transform.position = new Vector3(0, 0, -4);
+        transform.eulerAngles = Vector3.zero;
+        animator.Play(RUN);
+    }    
+
+    public void SetStoreEnterState()
+    {
+        transform.position = new Vector3(-6.2f, 0.1f, 6.2f);
+        transform.eulerAngles = new Vector3(0, 90, 0);
+        capsuleCollider.isTrigger = true;
+        animator.Play(CATWALK_FORWARD);
+    }
+
+    public void SetStoreExitState()
+    {
+        capsuleCollider.isTrigger = false;
+        //animator.Play(CATWALK_BACKWARD);
+    }
+
+    public void SetTShirtMaterial(string path)
+    {
+        Debug.LogError(path);
+        tShirtMaterial.mainTexture = Resources.Load<Texture>(path);
+    }
+
+    public void PlayGameOverAnim()
+    {
+        animator.Play("Tpose");
+        transform.rotation = Quaternion.Euler(-90, 0, 0);
+        transform.localScale = new Vector3(.5f, .5f, 0.01f);
     }
 }
