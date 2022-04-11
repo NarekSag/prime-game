@@ -12,6 +12,8 @@ public class CurrencyController : MonoBehaviour
 
     private float startingYPos;
 
+    public bool attracted;
+
     private void Start()
     {
         startingYPos = transform.position.y;
@@ -19,9 +21,21 @@ public class CurrencyController : MonoBehaviour
 
     private void Update()
     {
-        float posY = Mathf.Lerp(startingYPos, startingYPos + .2f, Mathf.PingPong(Time.time, 1));
-        transform.position = new Vector3(transform.position.x, posY, transform.position.z);
-        transform.Rotate(0, ROTATE_SPEED, 0, Space.World);
+        if(!attracted)
+        {
+            float posY = Mathf.Lerp(startingYPos, startingYPos + .2f, Mathf.PingPong(Time.time, 1));
+            transform.position = new Vector3(transform.position.x, posY, transform.position.z);
+            transform.Rotate(0, ROTATE_SPEED, 0, Space.World);
+        }
+        else
+        {
+            transform.position = Vector3.MoveTowards(transform.position, GameController.instance.Player.transform.position, 10 * Time.deltaTime);
+            if(Vector3.Distance(transform.position, GameController.instance.Player.transform.position) < 1.5f)
+            {
+                GameController.instance.currencyEvent.Invoke();
+                Destroy(this.gameObject);
+            }
+        }
     }
 
     private void OnTriggerEnter(Collider other)

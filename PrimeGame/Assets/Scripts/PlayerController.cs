@@ -24,6 +24,8 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private GameObject tShirt;
     [SerializeField] private Material tShirtMaterial;
+    [SerializeField] private GameObject shieldBubble;
+    [SerializeField] private GameObject magnet;
 
     #region On Start Initialized variables
     private Animator animator;
@@ -33,7 +35,7 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     private bool isHit;
-    private float health = 3;
+    public float health = 3;
 
     // Start is called before the first frame update
     void Start()
@@ -96,25 +98,32 @@ public class PlayerController : MonoBehaviour
     {
         if(collision.transform.tag.Equals(OBSTACLE))
         {
-            isHit = true;
-            health--;
-            animator.Play(FALL_BACK);
-            if(health != 0)
+            if (shieldBubble.activeSelf)
             {
-                StartCoroutine(ResetCharacter(GetAnimClipTime(FALL_BACK), 2));
+                SetShieldBubbleState(false);
+                StartCoroutine(ResetCharacter(0, 2));
             }
             else
             {
-                Debug.LogError("GAME OVER");
-                PlayerPreferences.SetCurrencyAmount(GameController.instance.currencyCounter);
-                //TO DO: GAME OVER SCREEN 
+                isHit = true;
+                animator.Play(FALL_BACK);
+                GameController.instance.decreaseHealthEvent.Invoke();
+                if (health != 0)
+                {
+                    StartCoroutine(ResetCharacter(GetAnimClipTime(FALL_BACK), 2));
+                }
+                else
+                {
+                    Debug.LogError("GAME OVER");
+                    PlayerPreferences.SetCurrencyAmount(GameController.instance.currencyCounter);
+                    //TO DO: GAME OVER SCREEN 
+                }
             }
         }
     }
 
     private IEnumerator ResetCharacter(float hitTime, float blinkTime)
     {
-        Debug.LogError("hit = " + hitTime);
         yield return new WaitForSeconds(hitTime);
         isHit = false;
         capsuleCollider.isTrigger = transform;
@@ -172,5 +181,15 @@ public class PlayerController : MonoBehaviour
         animator.Play("Tpose");
         transform.rotation = Quaternion.Euler(-90, 0, 0);
         transform.localScale = new Vector3(.5f, .5f, 0.01f);
+    }
+
+    public void SetShieldBubbleState(bool state)
+    {
+        shieldBubble.SetActive(state);
+    }
+
+    public void SetMagnetState(bool state)
+    {
+        magnet.SetActive(state);
     }
 }

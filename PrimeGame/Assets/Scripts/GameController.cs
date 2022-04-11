@@ -21,21 +21,29 @@ public class GameController : MonoBehaviour
 
     [Space, Header("UI")]
     [SerializeField] private GameObject storeUI;
+    [SerializeField] private GameObject healthBar;
     [SerializeField] private TMP_TextEventHandler playTMP;
     [SerializeField] private TMP_TextEventHandler storeTMP;
     [SerializeField] private TMP_TextEventHandler storeBackTMP;
     [SerializeField] private TMP_TextEventHandler optionsTMP;
     [SerializeField] private Text currencyCounterText;
     [SerializeField] private Text scoreCounterText;
+    [SerializeField] private Text healthCounterText;
 
     [HideInInspector] public int currencyCounter;
-    [HideInInspector] public UnityEvent currencyEvent;
     [HideInInspector] public int scoreCounter;
+    [HideInInspector] public bool doubleCurrency;
+    [HideInInspector] public bool doubleScore;
     [HideInInspector] public bool gameStarted;
+    [HideInInspector] public UnityEvent currencyEvent;
+    [HideInInspector] public UnityEvent increaseHealthEvent;
+    [HideInInspector] public UnityEvent decreaseHealthEvent;
+    [HideInInspector] public PlayerController playerController;
 
     private MainCamera mainCameraScript;
 
     public GameObject Player { get => player; }
+
     public Camera MainCamera { get => mainCamera; }
 
     public static GameController instance;
@@ -50,10 +58,14 @@ public class GameController : MonoBehaviour
             Destroy(gameObject);
         }
 
+        playerController = Player.GetComponent<PlayerController>();
+        mainCameraScript = mainCamera.GetComponent<MainCamera>();
         currencyEvent.AddListener(IncreaseCurrencyCounter);
+        increaseHealthEvent.AddListener(IncreaseHealth);
+        decreaseHealthEvent.AddListener(DecreaseHealth);
 
         SetCurrencyCounter();
-        mainCameraScript = mainCamera.GetComponent<MainCamera>();
+        SetHealthCounter();
         scoreCounterText.gameObject.SetActive(false);
         storeUI.SetActive(false);
     }
@@ -70,8 +82,25 @@ public class GameController : MonoBehaviour
 
     private void IncreaseCurrencyCounter()
     {
-        currencyCounter++;
+        currencyCounter += doubleCurrency == false ? 1 : 2; //doubleCurrency is 1 || 2 if player got the doubleCurrency power up 
         currencyCounterText.text = currencyCounter.ToString();
+    }
+
+    private void IncreaseHealth()
+    {
+        playerController.health += 1;
+        SetHealthCounter();
+    }
+
+    private void DecreaseHealth()
+    {
+        playerController.health -= 1;
+        SetHealthCounter();
+    }
+
+    public void SetHealthCounter()
+    {
+        healthCounterText.text = $"x{playerController.health}";
     }
 
     private void SetCurrencyCounter()
@@ -82,7 +111,7 @@ public class GameController : MonoBehaviour
 
     private void UpdateScoreCounter()
     {
-        int score = (int)(player.transform.position.z / 3);
+        int score = (int)(player.transform.position.z / 3); // TO:DO IMPLEMENT DOUBLE SCORE LOGIC
         scoreCounter = score <= 0 ? 0 : score;
         scoreCounterText.text = scoreCounter.ToString();
     }
@@ -93,7 +122,8 @@ public class GameController : MonoBehaviour
         mainCameraScript.SetTargetAngle(GAME);
         scoreCounterText.gameObject.SetActive(true);
         marketAnimator.Play("OpenDoorsAnim");
-        player.GetComponent<PlayerController>().SetGameState();
+        playerController.SetGameState();
+        healthBar.SetActive(true);
         DisableAllTMP();
     }
 
@@ -139,5 +169,29 @@ public class GameController : MonoBehaviour
     public void GameOver()
     {
 
+    }
+
+    private IEnumerator DoubleCurrency(float time)
+    {
+        doubleCurrency = true;
+        yield return new WaitForSeconds(time);
+        doubleCurrency = false;
+    }
+
+    public void SetDoubleCurrency()
+    {
+        StartCoroutine(DoubleCurrency(10));
+    }
+
+    private IEnumerator DoubleScore(float time)
+    {
+        doubleScore = true;
+        yield return new WaitForSeconds(time);
+        doubleScore = false;
+    }
+
+    public void SetDoubleScore()
+    {
+        StartCoroutine(DoubleScore(10));
     }
 }
