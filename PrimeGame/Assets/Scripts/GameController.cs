@@ -39,8 +39,10 @@ public class GameController : MonoBehaviour
     [HideInInspector] public UnityEvent increaseHealthEvent;
     [HideInInspector] public UnityEvent decreaseHealthEvent;
     [HideInInspector] public PlayerController playerController;
+    [HideInInspector] public List<JSONReader.Item> storeItemList;
 
     private MainCamera mainCameraScript;
+    private JSONReader jsonReader;
 
     public GameObject Player { get => player; }
 
@@ -57,9 +59,15 @@ public class GameController : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
 
+    private void Start()
+    {
         playerController = Player.GetComponent<PlayerController>();
         mainCameraScript = mainCamera.GetComponent<MainCamera>();
+        jsonReader = GetComponent<JSONReader>();
+        storeItemList = jsonReader.myItemList.item;
+
         currencyEvent.AddListener(IncreaseCurrencyCounter);
         increaseHealthEvent.AddListener(IncreaseHealth);
         decreaseHealthEvent.AddListener(DecreaseHealth);
@@ -106,6 +114,12 @@ public class GameController : MonoBehaviour
     private void SetCurrencyCounter()
     {
         currencyCounter = PlayerPreferences.GetCurrencyAmount();
+        currencyCounterText.text = currencyCounter.ToString();
+    }
+
+    public void UpdateCurrency(int amount)
+    {
+        currencyCounter += amount;
         currencyCounterText.text = currencyCounter.ToString();
     }
 
@@ -193,5 +207,10 @@ public class GameController : MonoBehaviour
     public void SetDoubleScore()
     {
         StartCoroutine(DoubleScore(10));
+    }
+
+    public void OverrideItemJson()
+    {
+        jsonReader.Override(jsonReader.myItemList);
     }
 }

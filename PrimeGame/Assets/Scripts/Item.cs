@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Item
 {
+
     public enum ItemType
     {
         SidemenShirt1,
@@ -67,6 +68,18 @@ public class Item
             case ItemType.TshirtTest: return "TshirtTest";
             case ItemType.SidemenShirt3: return "Legs";
             case ItemType.SidemenShirt4: return "Shoes";
+        }
+    }
+
+    public static int GetItemId(ItemType itemType)
+    {
+        switch (itemType)
+        {
+            default:
+            case ItemType.SidemenShirt1: return 0;
+            case ItemType.TshirtTest: return 1;
+            case ItemType.SidemenShirt3: return 2;
+            case ItemType.SidemenShirt4: return 3;
         }
     }
 }

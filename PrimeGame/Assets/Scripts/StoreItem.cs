@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class StoreItem : MonoBehaviour
@@ -9,68 +11,77 @@ public class StoreItem : MonoBehaviour
     [SerializeField] private Text itemPriceText;
     [SerializeField] private Image itemImage;
 
-    [SerializeField] private Button mainItemButton;
-    [SerializeField] private Button lockedButton;
     [SerializeField] private Button buyButton;
-    [SerializeField] private Button cancelButton;
+    [SerializeField] private Button equipButton;
+    [SerializeField] private GameObject equippedState;
 
-    [SerializeField] private GameObject lockedState;
-    [SerializeField] private GameObject buyState;
-    [SerializeField] private GameObject outlineBg;
+    [HideInInspector] public bool isEquipped;
 
     private PlayerController playerController;
+    private StoreDialog store;
+    private int itemId;
     private int itemPrice;
     private string itemMaterialName;
 
     private void Start()
     {
-        playerController = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
+        playerController = GameController.instance.playerController;
+        store = GameObject.Find("Store").GetComponent<StoreDialog>();
 
-        mainItemButton.onClick.AddListener(OnMainButtonClick);
-        lockedButton.onClick.AddListener(OnLockedButtonClick);
         buyButton.onClick.AddListener(OnBuyButtonClick);
-        cancelButton.onClick.AddListener(OnCancelButtonClick);
+        equipButton.onClick.AddListener(OnEquipButtonClick);
     }
 
-    public void InitItem(Item.ItemType itemType)
+    public void InitItem(JSONReader.Item item)
     {
-        itemNameText.text = Item.GetItemName(itemType);
-        itemPrice = Item.GetItemCost(itemType);
+        itemId = item.id;
+        itemNameText.text = item.name;
+        itemPrice = item.price;
         itemPriceText.text = itemPrice.ToString();
-        itemImage.sprite = Resources.Load<Sprite>(Item.GetTextureName(itemType));
-        Debug.LogError(itemImage.sprite);
-        itemMaterialName = Item.GetMaterialTextureName(itemType);
-    }
-
-    private void OnLockedButtonClick()
-    {
-        buyState.SetActive(true);
+        itemImage.sprite = Resources.Load<Sprite>(item.textureName);
+        itemMaterialName = item.materialTextureName;
+        isEquipped = item.isEquipped;
+        SetButtonsState(item);
     }
 
     private void OnBuyButtonClick()
     {
-        //if(user money >= itemPrice)
-        buyState.SetActive(false);
-        lockedState.SetActive(false);
-    }
-
-    private void OnCancelButtonClick()
-    {
-        buyState.SetActive(false);
-        lockedState.SetActive(true);
-    }
-
-    private void OnMainButtonClick()
-    {
-        if(!lockedState.activeSelf && itemMaterialName != null) //Maybe not check this and just set the button.enabled = false;
+        if(GameController.instance.currencyCounter >= itemPrice)
         {
-            Transform content = transform.parent;
-            foreach (Transform child in content)
-            {
-                child.Find("OutlineBg").gameObject.SetActive(false);
-            }
-            outlineBg.SetActive(true);
-            playerController.SetTShirtMaterial(itemMaterialName);
+            GameController.instance.UpdateCurrency(-itemPrice);
+            buyButton.gameObject.SetActive(false);
+            equipButton.gameObject.SetActive(true);
+            GameController.instance.storeItemList.FirstOrDefault(s => s.id == itemId).isBought = true;
+            GameController.instance.OverrideItemJson();
         }
+    }
+
+    private void OnEquipButtonClick()
+    {
+        equipButton.gameObject.SetActive(false);
+        equippedState.SetActive(true);
+        playerController.SetTShirtMaterial(itemMaterialName);
+        store.EquipStoreItemById(itemId);
+    }
+
+    private void SetButtonsState(JSONReader.Item item)
+    {
+        buyButton.gameObject.SetActive(!item.isBought);
+        equipButton.gameObject.SetActive(!item.isEquipped && item.isBought);
+        equippedState.SetActive(item.isBought && item.isEquipped);
+    }
+
+    public StoreItem GetItemById(int id)
+    {
+        if(id == itemId)
+        {
+            return this;
+        }
+        return null;
+    }
+
+    public int GetItemId()
+    {
+        return itemId;
     }
 }
