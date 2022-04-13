@@ -68,7 +68,8 @@ public class FollowingObstacle : MonoBehaviour
             }
             if(GameController.instance.Player.transform.position.z <= transform.position.z)
             {
-                GameOver();
+                GameController.instance.GameOver();
+                GameController.instance.playerController.PlayGameOverAnim();
             }
         }
 
@@ -86,12 +87,9 @@ public class FollowingObstacle : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if(other.transform.tag.Equals("Player"))
-            GameOver();
-    }
-
-    private void GameOver()
-    {
-        GameController.instance.gameStarted = false;
-        GameController.instance.Player.GetComponent<PlayerController>().PlayGameOverAnim();
+        {
+            GameController.instance.GameOver();
+            GameController.instance.playerController.PlayGameOverAnim();
+        }
     }
 }

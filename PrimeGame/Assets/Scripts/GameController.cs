@@ -214,12 +214,15 @@ public class GameController : MonoBehaviour
         storeTMP.enabled = false;
         storeBackTMP.enabled = false;
         optionsTMP.enabled = false;
+        optionsBackTMP.enabled = false;
     }
 
     public void GameOver()
     {
+        healthBar.gameObject.SetActive(false);
         gameOverButton.gameObject.SetActive(true);
         gameOverScoreText.text = scoreCounter.ToString();
+        gameStarted = false;
     }
 
     private IEnumerator DoubleCurrency(float time)

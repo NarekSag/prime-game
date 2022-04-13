@@ -98,6 +98,10 @@ public class PlayerController : MonoBehaviour
     {
         if(collision.transform.tag.Equals(OBSTACLE) && !isHit)
         {
+            if(collision.gameObject.GetComponent<Pedestrian>() != null && IsSliding())
+            {
+                return;
+            }
             if (shieldBubble.activeSelf)
             {
                 SetShieldBubbleState(false);
@@ -191,5 +195,15 @@ public class PlayerController : MonoBehaviour
     public void SetMagnetState(bool state)
     {
         magnet.SetActive(state);
+    }
+
+    public bool IsSliding()
+    {
+        return animator.GetCurrentAnimatorStateInfo(0).IsName("Slide");
+    }
+
+    public bool IsJumping()
+    {
+        return animator.GetCurrentAnimatorStateInfo(0).IsName("Jump");
     }
 }

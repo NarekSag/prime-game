@@ -5,6 +5,8 @@ using UnityEngine;
 public class LevelGenerator : MonoBehaviour
 {
     [SerializeField] private GameObject[] obstacles;
+    [SerializeField] private GameObject[] pedestrians;
+
     private int secNum;
     private float zPos = 77f;
     private bool creatingSection;
@@ -36,6 +38,7 @@ public class LevelGenerator : MonoBehaviour
     {
         secNum = Random.Range(0, obstacles.Length);
         var obstacleInstance = Instantiate(obstacles[secNum], new Vector3(0, 0, zPos), Quaternion.identity);
+        float oldZPos = zPos;
         if (obstacles[secNum].name.Contains("DoubleObstacle"))
         {
             zPos += 154;
@@ -44,7 +47,21 @@ public class LevelGenerator : MonoBehaviour
         {
             zPos += 77;
         }
+        if(!(obstacles[secNum].name.Contains("DoubleObstacle2") || obstacles[secNum].name.Contains("DoubleObstacle3")))
+            GeneratePedestrians(10, oldZPos ,zPos, obstacleInstance.transform);
         obstaclesList.Add(obstacleInstance);
+    }
+
+    private void GeneratePedestrians(int amount,float minPos, float maxPos, Transform parent)
+    {
+        for(int i = 0; i < amount; i++)
+        {
+            int randPed = Random.Range(0, pedestrians.Length);
+            float randZPos = Random.Range(minPos, maxPos);
+            float randYRot = Random.Range(0, 180);
+            var pedestrianInstance = Instantiate(pedestrians[randPed], new Vector3(0, 0, randZPos), Quaternion.identity, parent);
+            pedestrianInstance.transform.eulerAngles = new Vector3(0, randYRot, 0);
+        }
     }
 
     private void DestroyObstacle()
