@@ -1,1 +1,0 @@
-{"item":[{"id":0,"name":"SidemenShirt1","price":10,"textureName":"SidemenShirt1","materialTextureName":"SidemenShirt1","isBought":true,"isEquipped":true},{"id":1,"name":"TshirtTest","price":20,"textureName":"TshirtTest","materialTextureName":"TshirtTest","isBought":false,"isEquipped":false}]}
