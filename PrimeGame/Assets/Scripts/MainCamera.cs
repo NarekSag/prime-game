@@ -7,6 +7,7 @@ public class MainCamera : MonoBehaviour
 {
     private const float STORE_ANGLE = 270f;
     private const float GAME_ANGLE = 359.99f;
+    private const float OPTIONS_ANGLE = 90;
     private const float DEFAULT_ANGLE = 180;
 
     private Vector3 offset;// = new Vector3(0, 4, -3.5f);
@@ -72,6 +73,9 @@ public class MainCamera : MonoBehaviour
                 break;
             case "Store":
                 targetAngle = new Vector3(currentAngle.x, STORE_ANGLE, currentAngle.z);
+                break;
+            case "Options":
+                targetAngle = new Vector3(currentAngle.x, OPTIONS_ANGLE, currentAngle.z);
                 break;
             default:
                 targetAngle = new Vector3(currentAngle.x, DEFAULT_ANGLE, currentAngle.z);

@@ -96,7 +96,7 @@ public class PlayerController : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if(collision.transform.tag.Equals(OBSTACLE))
+        if(collision.transform.tag.Equals(OBSTACLE) && !isHit)
         {
             if (shieldBubble.activeSelf)
             {
@@ -114,9 +114,9 @@ public class PlayerController : MonoBehaviour
                 }
                 else
                 {
-                    Debug.LogError("GAME OVER");
+                    GameController.instance.GameOver();
+                    animator.Play("Tpose");
                     PlayerPreferences.SetCurrencyAmount(GameController.instance.currencyCounter);
-                    //TO DO: GAME OVER SCREEN 
                 }
             }
         }

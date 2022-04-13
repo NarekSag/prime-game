@@ -10,6 +10,7 @@ public class GameController : MonoBehaviour
 {
     public const string GAME = "Game";
     public const string STORE = "Store";
+    public const string OPTIONS = "Options";
     public const string DEFAULT = "Default";
 
     public static float GAME_SPEED = 1f;
@@ -26,9 +27,12 @@ public class GameController : MonoBehaviour
     [SerializeField] private TMP_TextEventHandler storeTMP;
     [SerializeField] private TMP_TextEventHandler storeBackTMP;
     [SerializeField] private TMP_TextEventHandler optionsTMP;
+    [SerializeField] private TMP_TextEventHandler optionsBackTMP;
     [SerializeField] private Text currencyCounterText;
     [SerializeField] private Text scoreCounterText;
     [SerializeField] private Text healthCounterText;
+    [SerializeField] private Text gameOverScoreText;
+    [SerializeField] private Button gameOverButton;
 
     [HideInInspector] public int currencyCounter;
     [HideInInspector] public int scoreCounter;
@@ -71,6 +75,7 @@ public class GameController : MonoBehaviour
         currencyEvent.AddListener(IncreaseCurrencyCounter);
         increaseHealthEvent.AddListener(IncreaseHealth);
         decreaseHealthEvent.AddListener(DecreaseHealth);
+        gameOverButton.onClick.AddListener(ReloadCurrentScene);
 
         SetCurrencyCounter();
         SetHealthCounter();
@@ -86,6 +91,11 @@ public class GameController : MonoBehaviour
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
+    }
+
+    private void ReloadCurrentScene()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     private void IncreaseCurrencyCounter()
@@ -161,15 +171,41 @@ public class GameController : MonoBehaviour
         mainCameraScript.targetDestinationEvent += EnableStoreTMP;
     }
 
-    public void EnableStoreTMP()
+    public void OnOptionsClick()
+    {
+        mainCameraScript.SetTargetAngle(OPTIONS);
+        optionsTMP.enabled = false;
+        optionsBackTMP.enabled = false;
+        mainCameraScript.targetDestinationEvent = null;
+        mainCameraScript.targetDestinationEvent += TargetOnOptions;
+    }
+
+    public void OnOptionsBackClick()
+    {
+        mainCameraScript.SetTargetAngle(DEFAULT);
+        mainCameraScript.targetDestinationEvent = null;
+        mainCameraScript.targetDestinationEvent += EnableOptionsTMP;
+    }
+
+    private void EnableStoreTMP()
     {
         storeTMP.enabled = true;
     }
 
-    public void TargetOnStore()
+    private void TargetOnStore()
     {
         storeBackTMP.enabled = true;
         storeUI.SetActive(true);
+    }
+
+    private void TargetOnOptions()
+    {
+        optionsBackTMP.enabled = true;
+    }
+
+    private void EnableOptionsTMP()
+    {
+        optionsTMP.enabled = true;
     }
 
     public void DisableAllTMP()
@@ -182,7 +218,8 @@ public class GameController : MonoBehaviour
 
     public void GameOver()
     {
-
+        gameOverButton.gameObject.SetActive(true);
+        gameOverScoreText.text = scoreCounter.ToString();
     }
 
     private IEnumerator DoubleCurrency(float time)
