@@ -36,13 +36,12 @@ public class MainCamera : MonoBehaviour
             {
                 if (inTween)
                 {
-                    SetCamera();
+                    StartCoroutine(SetGameCamera());
                 }
             }
             else
             {
                 transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(targetAngle), 5 * Time.deltaTime);
-                //transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(targetAngle), 100 * Time.deltaTime);
             }
         }
         if((Vector3.Distance(transform.eulerAngles, targetAngle) < 0.1f) && !targetEventInvoked)
@@ -106,5 +105,11 @@ public class MainCamera : MonoBehaviour
             SetTargetAngle();
             SetCameraOffset(10);
         }
+    }
+
+    private IEnumerator SetGameCamera()
+    {
+        yield return new WaitForSeconds(1);
+        SetCamera();
     }
 }
