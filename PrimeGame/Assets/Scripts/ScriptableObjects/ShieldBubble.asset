@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a258c36b4eb7554c8ae8dcce8017c8f, type: 3}
   m_Name: ShieldBubble
   m_EditorClassIdentifier: 
-  actorName: Blue Raspberry
+  actorName: Shield
   powerUpType: 2
   description: Gives the player a shield bubble
   cost: 100

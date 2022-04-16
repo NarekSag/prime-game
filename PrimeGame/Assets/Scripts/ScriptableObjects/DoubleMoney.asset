@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a258c36b4eb7554c8ae8dcce8017c8f, type: 3}
   m_Name: DoubleMoney
   m_EditorClassIdentifier: 
-  actorName: Lemon Lime
+  actorName: Double Money
   powerUpType: 3
   description: X2 The Currency Amount for 10 seconds
   cost: 150

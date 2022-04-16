@@ -33,6 +33,7 @@ public class GameController : MonoBehaviour
     [SerializeField] private Text healthCounterText;
     [SerializeField] private Text gameOverScoreText;
     [SerializeField] private Button gameOverButton;
+    [SerializeField] private ToastMessage toastMessage;
 
     [HideInInspector] public int currencyCounter;
     [HideInInspector] public int scoreCounter;
@@ -51,6 +52,8 @@ public class GameController : MonoBehaviour
     public GameObject Player { get => player; }
 
     public Camera MainCamera { get => mainCamera; }
+
+    public ToastMessage ToastMessage { get => toastMessage; }
 
     public static GameController instance;
     private void Awake()

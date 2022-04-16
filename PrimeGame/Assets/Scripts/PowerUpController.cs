@@ -19,7 +19,6 @@ public class PowerUpController : MonoBehaviour
         particle.transform.localScale = Vector3.one * 2;
         ParticleSystem.MainModule mainModule = particle.main;
         mainModule.startColor = selectedPowerUp.particleColor;
-        Debug.Log(selectedPowerUp.description);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -27,7 +26,10 @@ public class PowerUpController : MonoBehaviour
         if (other.tag.Equals(PLAYER))
         {
             SetPowerUpAbility(selectedPowerUp.powerUpType);
-            //GameController.instance.currencyEvent.Invoke();
+            //TO DO: Animate the {selectedPowerUp.particleColor} alpha as well
+            string powerUpName = $"<color=#{ColorUtility.ToHtmlStringRGBA(selectedPowerUp.particleColor)}>{selectedPowerUp.actorName.ToUpper()}</color>";
+            //string output = string.Format("You have picked <color=#" + ColorUtility.ToHtmlStringRGBA(selectedPowerUp.particleColor) + ">{0}</color>", selectedPowerUp.actorName.ToUpper());
+            GameController.instance.ToastMessage.ShowToastMessage($"You have picked {powerUpName}");
             Destroy(this.gameObject);
         }
     }
