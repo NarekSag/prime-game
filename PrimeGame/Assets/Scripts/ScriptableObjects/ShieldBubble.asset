@@ -16,4 +16,5 @@ MonoBehaviour:
   powerUpType: 2
   description: Gives the player a shield bubble
   cost: 100
-  actorMaterial: {fileID: 2100000, guid: fcf585c78d8ef8547af8ed4930139af0, type: 2}
+  actorTexture: {fileID: 2800000, guid: 45acc6e54b75a2c44acd5c8db79f7835, type: 3}
+  particleColor: {r: 0.20392157, g: 0.5529412, b: 1, a: 1}

@@ -15,5 +15,6 @@ public class SOPowerUp : ScriptableObject
 
     public string description;
     public int cost;
-    public Material actorMaterial;
+    public Texture actorTexture;
+    public Color particleColor;
 }

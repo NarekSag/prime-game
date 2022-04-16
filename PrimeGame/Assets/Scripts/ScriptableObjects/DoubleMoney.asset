@@ -16,4 +16,5 @@ MonoBehaviour:
   powerUpType: 3
   description: X2 The Currency Amount for 10 seconds
   cost: 150
-  actorMaterial: {fileID: 2100000, guid: fcf585c78d8ef8547af8ed4930139af0, type: 2}
+  actorTexture: {fileID: 2800000, guid: f5c4589dfc3f42e4ab2e72dd6db5fbce, type: 3}
+  particleColor: {r: 0.49411765, g: 1, b: 0, a: 1}

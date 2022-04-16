@@ -16,4 +16,5 @@ MonoBehaviour:
   powerUpType: 0
   description: Gives the player 1 more health
   cost: 50
-  actorMaterial: {fileID: 2100000, guid: fcf585c78d8ef8547af8ed4930139af0, type: 2}
+  actorTexture: {fileID: 2800000, guid: 97320ef29170ab84a93163a1b6f06dae, type: 3}
+  particleColor: {r: 1, g: 0, b: 0, a: 1}

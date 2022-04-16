@@ -6,15 +6,20 @@ public class PowerUpController : MonoBehaviour
 {
     private const string PLAYER = "Player";
 
+    [SerializeField] private GameObject prime;
+    [SerializeField] private ParticleSystem particle;
     [SerializeField] private SOPowerUp[] powerUps;
 
-    private SOPowerUp selectedPowerUp;
-    private Material material;
+    private SOPowerUp selectedPowerUp; 
 
     private void Start()
     {
         selectedPowerUp = GetRandomPowerUp();
-        material = selectedPowerUp.actorMaterial;
+        prime.GetComponent<MeshRenderer>().material.mainTexture = selectedPowerUp.actorTexture;
+        particle.transform.localScale = Vector3.one * 2;
+        ParticleSystem.MainModule mainModule = particle.main;
+        mainModule.startColor = selectedPowerUp.particleColor;
+        Debug.Log(selectedPowerUp.description);
     }
 
     private void OnTriggerEnter(Collider other)
