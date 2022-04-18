@@ -5,10 +5,12 @@ using UnityEngine;
 public class Pedestrian : MonoBehaviour
 {
     private Rigidbody rb;
+    private AudioSource audioSource;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
+        audioSource = GetComponent<AudioSource>();
     }
 
     private void Update()
@@ -29,6 +31,8 @@ public class Pedestrian : MonoBehaviour
             if (pc.IsSliding())
             {
                 rb.AddForce(transform.up * 10);
+                if(audioSource != null)
+                    audioSource.Play();
             }
             else
             {

@@ -10,6 +10,7 @@ public class CurrencyController : MonoBehaviour
     [SerializeField] private GameObject mainObject;
     [SerializeField] private GameObject particle;
 
+    private AudioSource audioSource;
     private float startingYPos;
 
     public bool attracted;
@@ -17,6 +18,7 @@ public class CurrencyController : MonoBehaviour
     private void Start()
     {
         startingYPos = transform.position.y;
+        audioSource = GetComponent<AudioSource>();
     }
 
     private void Update()
@@ -43,7 +45,16 @@ public class CurrencyController : MonoBehaviour
         if(other.tag.Equals(PLAYER))
         {
             GameController.instance.currencyEvent.Invoke();
-            Destroy(this.gameObject);
+            StartCoroutine(PlaySound(audioSource));
         }
+    }
+
+    private IEnumerator PlaySound(AudioSource source)
+    {
+        source.Play();
+        mainObject.SetActive(false);
+        particle.SetActive(false);
+        yield return new WaitForSeconds(source.clip.length);
+        Destroy(this.gameObject);
     }
 }

@@ -10,10 +10,12 @@ public class PowerUpController : MonoBehaviour
     [SerializeField] private ParticleSystem particle;
     [SerializeField] private SOPowerUp[] powerUps;
 
+    private AudioSource audioSource;
     private SOPowerUp selectedPowerUp; 
 
     private void Start()
     {
+        audioSource = GetComponent<AudioSource>();
         selectedPowerUp = GetRandomPowerUp();
         prime.GetComponent<MeshRenderer>().material.mainTexture = selectedPowerUp.actorTexture;
         particle.transform.localScale = Vector3.one * 2;
@@ -26,12 +28,19 @@ public class PowerUpController : MonoBehaviour
         if (other.tag.Equals(PLAYER))
         {
             SetPowerUpAbility(selectedPowerUp.powerUpType);
-            //TO DO: Animate the {selectedPowerUp.particleColor} alpha as well
             string powerUpName = $"<color=#{ColorUtility.ToHtmlStringRGBA(selectedPowerUp.particleColor)}>{selectedPowerUp.actorName.ToUpper()}</color>";
-            //string output = string.Format("You have picked <color=#" + ColorUtility.ToHtmlStringRGBA(selectedPowerUp.particleColor) + ">{0}</color>", selectedPowerUp.actorName.ToUpper());
             GameController.instance.ToastMessage.ShowToastMessage($"You have picked {powerUpName}");
-            Destroy(this.gameObject);
+            StartCoroutine(PlaySound(audioSource));
         }
+    }
+
+    private IEnumerator PlaySound(AudioSource source)
+    {
+        source.Play();
+        prime.SetActive(false);
+        particle.gameObject.SetActive(false);
+        yield return new WaitForSeconds(source.clip.length);
+        Destroy(this.gameObject);
     }
 
     private SOPowerUp GetRandomPowerUp()
